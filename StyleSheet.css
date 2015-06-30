@@ -1,0 +1,46 @@
+﻿body {font-family: 'Open Sans', Arial, sans-serif; font-weight: 400
+}
+.container{
+    margin: 0 auto;
+    padding-top: 0px;
+    background-color: #66FF99;
+}
+.headerClass{
+    border: 1px solid #00FF00;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #66FFCC;
+}
+h1{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    text-align: center; 
+}
+
+.table td,
+  .table th {
+    background-color: #fff !important;
+  }
+  .btn > .caret,
+  .dropup > .btn > .caret {
+    border-top-color: #000 !important;
+  }
+  .label {
+    border: 1px solid #000;
+  }
+  .table {
+    border-collapse: collapse !important;
+  }
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #ddd !important;
+  }
+
+  .form-inline{
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }

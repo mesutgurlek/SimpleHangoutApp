@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html data-ng-app="hangoutApp">
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'><!--OswaldFonts-->
+    <link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'><!--Francois FOnt-->
+    <title>My Hangout List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Responsive-->
+    <link href="StyleSheet.css" rel="stylesheet" media="screen" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><!--fontawesome-->  
+</head>
+    <body>
+        <div class="container">
+            <div class="headerClass" id="headerId">
+                <h1> Hangout Contacts App</h1>
+            </div>
+
+            <div data-ng-controller="SimpleController">
+
+                <a ng-click="showTable()" class="btn btn-lg btn-success" href="#">
+
+                    <i class="fa fa-phone-square fa-2x pull-left"></i> Show the Contacts
+                </a>
+
+                <a ng-click="hideTable()" class="btn btn-lg btn-success" href="#">
+
+                    <i class="fa fa-phone-square fa-2x pull-left"></i> Hide the Contacts
+                </a>
+
+                <a ng-click="" target="_blank" href="https://plus.google.com/hangouts/_?gid=<app_id">Start a Hangout</a>
+
+                <br />
+                <br />
+                
+                <div ng-show="checked">    
+
+                    <button ng-click="uncheckAll()" type="submit" class="btn btn-default">Clear All</button>
+                    <button ng-click="generateCall()" type="button" class="btn btn-primary">Generate Group Call</button>
+                    <br />
+                    <br />
+                    <div id="placeholder-div2"></div>
+                    <br />
+                    <br />
+                                 
+                    <table class="table" ng-cloak>
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Choose</th>
+                                <th class="col-md-1">Index</th>
+                                <th class="col-md-1">Firstname</th>
+                                <th class="col-md-1">Lastname</th>
+                                <th class="col-md-1">Email</th>
+                                <th class="col-md-1">Action</th>   
+                                <th class="col-md-1">Hangout Call</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="person in contacts | orderBy:'id'"> 
+                                <td class="col-md-1"><input ng-change="modifyEmails('{{person.email}}')"  type="checkbox" ng-model="person.selected"> </td>
+                                <td class="col-md-1">{{ person.id }}</td>
+                                <td class="col-md-1">{{person.name}}</td>
+                                <td class="col-md-1">{{person.surname | uppercase}}</td>
+                                <td class="col-md-1">{{person.email}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" ng-click="del($index)">Delete</button>
+                                </td> 
+                                <td class="col-md-1" ng-cloak>
+                                    <g:hangout render="createhangout"
+                                               invites="[{ id : '{{person.email}}', invite_type : 'EMAIL' }]">
+                                    </g:hangout>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                                    
+            </div>
+            
+            <script src="https://apis.google.com/js/platform.js" async defer></script>
+            <script src="Scripts/angular.min.js"></script>     
+            <script>
+                var hangoutApp = angular.module('hangoutApp', []);
+                
+                var controllers = {};
+                controllers.SimpleController = function SimpleController($scope) {
+                    $scope.emails = [];
+
+                    $scope.contacts = [
+                        {id: 1, name: 'Osman', surname: 'gurlek', email: 'osmangurlek10@gmail.com', selected: false },
+                        { id: 2, name: 'Mesut', surname: 'gurlek', email: 'mesutgurlekcs@gmail.com', selected: false },
+                        { id: 3, name: 'Emre', surname: 'gurlek', email: 'emre@gmail.com', selected: false },
+                        {id: 4, name: 'Ahmet', surname: 'gurlek', email: 'ahmet@gmail.com', selected: false },
+                        { id: 5, name: 'Sami', surname: 'gurlek', email: 'sami@gmail.com', selected: false },
+                        { id: 6, name: 'Ali', surname: 'gurlek', email: 'ali@gmail.com', selected: false }
+                    ];
+
+                    $scope.modifyEmails = function (_email) {
+                        var checked;
+                        angular.forEach($scope.contacts, function (e) {
+                            if (e.email === _email) {
+                                checked = e.selected;
+                            }
+                        });
+                        if (checked) {
+                            $scope.emails.push(
+                                 { id: _email, invite_type: 'EMAIL' }
+                             );
+                        }
+                        else {
+                            var whatIndex = null;
+                            angular.forEach($scope.emails, function (e, index) {
+                                if (e.id === _email) {
+                                    whatIndex = index;
+                                }
+                            });
+                            $scope.emails.splice(whatIndex, 1);
+                        }                       
+                    }
+
+
+                    $scope.generateCall = function () {
+                        gapi.hangout.render('placeholder-div2', {
+                            'render': 'createhangout',
+                            'invites': $scope.emails,
+                            'widget_size': 72
+                        });
+                    };
+
+                    $scope.del = function (ind) {
+                         $scope.contacts.splice(ind, 1);
+                    };
+
+                    $scope.showTable = function () {
+                        $scope.checked = true;
+                    };
+
+                    $scope.hideTable = function () {
+                        $scope.checked = false;
+                    };
+
+                    $scope.uncheckAll = function () {
+                        angular.forEach($scope.contacts, function (person) {
+                            person.selected = false;
+                        });
+                        $scope.emails = [];
+                    };
+                }
+                hangoutApp.controller(controllers);
+            </script>
+        </div>
+    </body>
+      
+
+</html>
